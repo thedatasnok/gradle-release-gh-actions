@@ -47,7 +47,7 @@ jobs:
 
       - name: Resolve build output directory
         run: 
-          BUILD_OUTPUT=$(echo "${{ inputs.project }}" | awk '{gsub(":", "/"); print "."$ "/build/libs/"}')
+          BUILD_OUTPUT=$(echo "${{ inputs.project }}" | awk '{gsub(":", "/"); print "."$1"/build/libs/"}')
           echo "build_dir=$BUILD_OUTPUT >> $GITHUB_ENV"
       
       - name: Upload release to GitHub Releases
