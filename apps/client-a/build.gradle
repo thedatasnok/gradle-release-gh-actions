@@ -14,7 +14,6 @@ release {
   tagCommitMessage = ' creating tag: '
   newVersionCommitMessage = ' new version: '
   tagTemplate = 'client-a@${version}'
-  versionPropertyFile = 'apps/client-a/gradle.properties'
 
   failOnCommitNeeded = false
   failOnPublishNeeded = false
