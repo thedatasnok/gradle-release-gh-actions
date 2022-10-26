@@ -60,9 +60,7 @@ jobs:
       - name: Resolve artifact name
         run: |
           VERSION=$(gradle ${{ inputs.project }}:properties | grep "name:" | awk '{print $2}')
-          echo "::set-output name=version::$VERSION"
-        id: artifact_name
-
+          echo "artifact_name=$VERSION" >> $GITHUB_ENV
 
       - name: Trigger publish workflow
         uses: actions/github-script@v6
@@ -75,6 +73,6 @@ jobs:
               ref: 'main',
               inputs: {
                 project: '${{ inputs.project }}',
-                tag_ref: '${{ inputs.project }}@v${{ inputs.releaseVersion }}',
+                tag_ref: '${{ env.artifact_name }}@v${{ inputs.releaseVersion }}',
               },
             })

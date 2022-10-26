@@ -43,14 +43,12 @@ jobs:
       - name: Get version
         run: |
           VERSION=$(gradle ${{ inputs.project }}:printVersion | grep "Version:" | awk '{print $2}')
-          echo "::set-output name=version::$VERSION"
-        id: get_version
+          echo "project_version=$VERSION >> $GITHUB_ENV"
 
       - name: Resolve build output directory
         run: 
           BUILD_OUTPUT=$(echo "${{ inputs.project }}" | awk '{gsub(":", "/"); print "."$ "/build/libs/"}')
-          echo "::set-output name=dir::$BUILD_OUTPUT"
-        id: build_output
+          echo "build_dir=$BUILD_OUTPUT >> $GITHUB_ENV"
       
       - name: Upload release to GitHub Releases
         uses: softprops/action-gh-release@v1
@@ -58,4 +56,4 @@ jobs:
           tag_name: ${{ inputs.tag_ref }}
           name: ${{ inputs.tag_ref }}
           body: "boom"
-          files: ${{ steps.build_output.outputs.dir}}*-${{ steps.get_version.outputs.version }}.jar
+          files: ${{ env.build_dir }}*-${{ env.project_version }}.jar
