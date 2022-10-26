@@ -1,0 +1,39 @@
+plugins {
+  id 'cool.datasnok.samples.java-application-conventions'
+  id 'org.openjfx.javafxplugin' version '0.0.13'
+  id 'net.researchgate.release' version '3.0.2'
+}
+
+dependencies {
+  implementation project(':packages:core')
+}
+
+release {
+  preCommitText = '[ci skip]'
+  preTagCommitMessage = ' pre tag: '
+  tagCommitMessage = ' creating tag: '
+  newVersionCommitMessage = ' new version: '
+  tagTemplate = 'client-b@${version}'
+}
+
+application {
+  mainClass = 'cool.datasnok.samples.clientb.Launcher'
+}
+
+javafx {
+  version = '19'
+  modules = [ 'javafx.controls' ]
+}
+
+// configures the output jar to include all dependencies (fat JAR)
+jar {
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+  manifest {
+    attributes 'Main-Class': 'cool.datasnok.samples.clientb.Launcher'
+  }
+
+  from {
+    configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+  }
+}

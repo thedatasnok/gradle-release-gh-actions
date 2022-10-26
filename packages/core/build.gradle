@@ -1,0 +1,12 @@
+plugins {
+  id 'cool.datasnok.samples.java-library-conventions'
+  id 'net.researchgate.release' version '3.0.2'
+}
+
+release {
+  preCommitText = '[ci skip]'
+  preTagCommitMessage = ' pre tag: '
+  tagCommitMessage = ' creating tag: '
+  newVersionCommitMessage = ' new version: '
+  tagTemplate = 'core@${version}'
+}

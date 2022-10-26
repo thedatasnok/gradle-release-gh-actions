@@ -1,0 +1,61 @@
+name: Publish release
+
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: 'The project to release'
+        required: true
+        type: choice
+        options: 
+          - ':apps:client-a'
+          - ':apps:client-b'
+          - ':packages:core'
+      tag_ref:
+        description: 'Tag ref to publish release for'
+        required: true
+        type: string
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v3
+
+      - name: Merge release tag to main branch
+        run: |
+          git fetch
+          git merge ${{ inputs.tag_ref }}
+          git push
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+      
+      - name: Build project
+        run: gradle ${{ inputs.project }}:build
+
+      - name: Get version
+        run: |
+          VERSION=$(gradle ${{ inputs.project }}:printVersion | grep "Version:" | awk '{print $2}')
+          echo "::set-output name=version::$VERSION"
+        id: get_version
+
+      - name: Resolve build output directory
+        run: 
+          BUILD_OUTPUT=$(echo "${{ inputs.project }}" | awk '{gsub(":", "/"); print "."$ "/build/libs/"}')
+          echo "::set-output name=dir::$BUILD_OUTPUT"
+        id: build_output
+      
+      - name: Upload release to GitHub Releases
+        uses: softprops/action-gh-release@v1
+        with: 
+          tag_name: ${{ inputs.tag_ref }}
+          name: ${{ inputs.tag_ref }}
+          body: "boom"
+          files: ${{ steps.build_output.outputs.dir}}*-${{ steps.get_version.outputs.version }}.jar

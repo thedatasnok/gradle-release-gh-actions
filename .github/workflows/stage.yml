@@ -1,0 +1,80 @@
+name: Stage release with manually assigned versions
+
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: 'The project to release'
+        required: true
+        type: choice
+        options: 
+          - ':apps:client-a'
+          - ':apps:client-b'
+          - ':packages:core'
+      releaseVersion:
+        description: 'Release version'
+        required: true 
+        type: string
+      nextDevelopmentVersion:
+        description: 'Next development version'
+        required: true 
+        type: string
+
+jobs:
+  perform-release:
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: 'develop'
+          ssh-key: ${{ secrets.GH_PRIVATE_KEY }}
+      
+      - name: Set up SSH agent
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.GH_PRIVATE_KEY }}
+      
+      - name: Set GitHub Actions as commit author        
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Perform Gradle Release
+        run: 
+          gradle ${{ inputs.project }}:release
+            -Prelease.useAutomaticVersion=true 
+            -Prelease.releaseVersion=${{ inputs.releaseVersion }}
+            -Prelease.newVersion=${{ inputs.nextDevelopmentVersion }}
+
+      - name: Resolve artifact name
+        run: |
+          VERSION=$(gradle ${{ inputs.project }}:properties | grep "name:" | awk '{print $2}')
+          echo "::set-output name=version::$VERSION"
+        id: artifact_name
+
+
+      - name: Trigger publish workflow
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'publish.yml',
+              ref: 'main',
+              inputs: {
+                project: '${{ inputs.project }}',
+                tag_ref: '${{ inputs.project }}@v${{ inputs.releaseVersion }}',
+              },
+            })

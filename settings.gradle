@@ -1,0 +1,5 @@
+rootProject.name = 'gradle-release-gh-actions'
+
+include ':apps:client-a'
+include ':apps:client-b'
+include ':packages:core'
