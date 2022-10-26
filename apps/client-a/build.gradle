@@ -16,6 +16,12 @@ release {
   tagTemplate = 'client-a@${version}'
   versionPropertyFile = 'apps/client-a/gradle.properties'
 
+  failOnCommitNeeded = false
+  failOnPublishNeeded = false
+  failOnSnapshotDependencies = false
+  failOnUnversionedFiles = false
+  failOnUpdateNeeded = false
+
   git {
     requireBranch.set('')
   }
