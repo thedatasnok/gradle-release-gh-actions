@@ -35,6 +35,9 @@ javafx {
   modules = [ 'javafx.controls' ]
 }
 
+// for some reason this is necessary to make it work
+jar.dependsOn(':packages:core:build')
+
 // configures the output jar to include all dependencies (fat JAR)
 jar {
   duplicatesStrategy = DuplicatesStrategy.EXCLUDE
