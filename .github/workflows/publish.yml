@@ -47,8 +47,8 @@ jobs:
 
       - name: Resolve build output directory
         run: 
-          BUILD_DIR=$(gradle ${{ inputs.project }}:properties | grep "buildDir:" | awk '{print $2}')
-          echo "build_dir=$BUILD_DIR >> $GITHUB_ENV"
+          BUILD_PATH=$(gradle ${{ inputs.project }}:properties | grep "buildDir:" | awk '{print $2}')
+          echo "build_dir=$BUILD_PATH >> $GITHUB_ENV"
 
       - name: Upload release to GitHub Releases
         uses: softprops/action-gh-release@v1
