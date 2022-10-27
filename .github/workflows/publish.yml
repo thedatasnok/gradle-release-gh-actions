@@ -48,7 +48,7 @@ jobs:
       - name: Resolve build output directory
         run: 
           BUILD_PATH=$(gradle ${{ inputs.project }}:properties | grep "buildDir:" | awk '{print $2}')
-          echo "build_dir=$BUILD_PATH >> $GITHUB_ENV"
+          echo "BUILD_PATH=$BUILD_PATH >> $GITHUB_ENV"
 
       - name: Upload release to GitHub Releases
         uses: softprops/action-gh-release@v1
@@ -56,4 +56,4 @@ jobs:
           tag_name: ${{ inputs.tag_ref }}
           name: ${{ inputs.tag_ref }}
           body: "boom"
-          files: ${{ env.build_dir }}/libs/*-${{ env.project_version }}.jar
+          files: ${{ env.BUILD_PATH }}/libs/*-${{ env.project_version }}.jar
