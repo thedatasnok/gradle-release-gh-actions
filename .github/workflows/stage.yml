@@ -50,17 +50,28 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
+      - name: Resolve artifact name
+        run: |
+          ARTIFACT_NAME=$(gradle ${{ inputs.project }}:properties | grep "name:" | awk '{print $2}')
+          echo "artifact_name=$ARTIFACT_NAME" >> $GITHUB_ENV
+
+      - name: Store full release tag in output
+        id: release_tag
+        run: |
+          echo "tag=${{ env.artifact_name }}@{{ inputs.releaseVersion }}" >> $GITHUB_OUTPUT
+
+      - name: Update README link
+        run: |
+          cat README.md | awk '{gsub(/\[${{ env.artifact_name }}@.*]\(.*\)/, "[${{ steps.release_tag.outputs.tag }}](https://github.com/thedatasnok/gradle-release-gh-actions/releases/tag/${{ steps.release_tag.outputs.tag }})"); print}' > README.md
+          git add README.md
+          git commit -m "[ci skip] update release link for release of ${{ steps.release_tag.outputs.tag }}"
+
       - name: Perform Gradle Release
         run: 
           gradle ${{ inputs.project }}:release
             -Prelease.useAutomaticVersion=true 
             -Prelease.releaseVersion=${{ inputs.releaseVersion }}
             -Prelease.newVersion=${{ inputs.nextDevelopmentVersion }}
-
-      - name: Resolve artifact name
-        run: |
-          VERSION=$(gradle ${{ inputs.project }}:properties | grep "name:" | awk '{print $2}')
-          echo "artifact_name=$VERSION" >> $GITHUB_ENV
 
       - name: Trigger publish workflow
         uses: actions/github-script@v6
@@ -73,6 +84,6 @@ jobs:
               ref: 'main',
               inputs: {
                 project: '${{ inputs.project }}',
-                tag_ref: '${{ env.artifact_name }}@${{ inputs.releaseVersion }}',
+                tag_ref: '${{ steps.release_tag.outputs.tag }}',
               },
             })
