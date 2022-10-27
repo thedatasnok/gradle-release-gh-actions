@@ -47,13 +47,13 @@ jobs:
 
       - name: Resolve build output directory
         run: 
-          BUILD_OUTPUT=$(echo "${{ inputs.project }}" | awk '{gsub(":", "/"); print "."$1"/build/libs/"}')
-          echo "build_dir=$BUILD_OUTPUT >> $GITHUB_ENV"
-      
+          BUILD_DIR=$(gradle ${{ inputs.project }}:properties | grep "buildDir:" | awk '{print $2}')
+          echo "build_dir=$BUILD_DIR >> $GITHUB_ENV"
+
       - name: Upload release to GitHub Releases
         uses: softprops/action-gh-release@v1
         with: 
           tag_name: ${{ inputs.tag_ref }}
           name: ${{ inputs.tag_ref }}
           body: "boom"
-          files: ${{ env.build_dir }}*-${{ env.project_version }}.jar
+          files: ${{ env.build_dir }}/libs/*-${{ env.project_version }}.jar
