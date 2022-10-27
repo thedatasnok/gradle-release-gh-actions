@@ -30,6 +30,13 @@ eclipse.classpath {
   }
 }
 
+task copyArtifact(type: Copy) {
+  dependsOn("build")
+
+  from "$projectDir/build/libs"
+  into "$rootDir/artifacts"
+}
+
 task printVersion {
   doLast {
     println "Version: ${project.version}"
