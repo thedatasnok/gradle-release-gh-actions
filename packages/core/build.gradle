@@ -9,4 +9,14 @@ release {
   tagCommitMessage = ' creating tag: '
   newVersionCommitMessage = ' new version: '
   tagTemplate = 'core@${version}'
+
+  failOnCommitNeeded = false
+  failOnPublishNeeded = false
+  failOnSnapshotDependencies = false
+  failOnUnversionedFiles = false
+  failOnUpdateNeeded = false
+
+  git {
+    requireBranch.set('')
+  }
 }

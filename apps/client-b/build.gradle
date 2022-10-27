@@ -14,6 +14,16 @@ release {
   tagCommitMessage = ' creating tag: '
   newVersionCommitMessage = ' new version: '
   tagTemplate = 'client-b@${version}'
+
+  failOnCommitNeeded = false
+  failOnPublishNeeded = false
+  failOnSnapshotDependencies = false
+  failOnUnversionedFiles = false
+  failOnUpdateNeeded = false
+
+  git {
+    requireBranch.set('')
+  }
 }
 
 application {
