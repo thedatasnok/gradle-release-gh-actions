@@ -18,7 +18,7 @@ This project is meant to experiment with the Gradle Release plugin in conjunctio
   <td align="center">
     <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8dGVjaG5vbG9neXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60" />
 
-[client-b@1.1.0](https://github.com/thedatasnok/gradle-release-gh-actions/releases/tag/client-b@1.1.0)
+[client-b@1.2.0](https://github.com/thedatasnok/gradle-release-gh-actions/releases/tag/client-b@1.2.0)
 
   </td>
 </tr>
