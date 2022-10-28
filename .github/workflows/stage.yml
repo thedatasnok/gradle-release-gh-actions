@@ -62,7 +62,7 @@ jobs:
 
       - name: Update README link
         run: |
-          cat README.md | awk '{gsub(/\[${{ env.artifact_name }}@.*]\(.*\)/, "[${{ steps.release_tag.outputs.tag }}](https://github.com/thedatasnok/gradle-release-gh-actions/releases/tag/${{ steps.release_tag.outputs.tag }})"); print > "README.md"}'
+          cat README.md | awk '{gsub(/\[${{ env.artifact_name }}@.*]\(.*\)/, "[${{ steps.release_tag.outputs.tag }}](https://github.com/${{ github.repository }}/releases/tag/${{ steps.release_tag.outputs.tag }})"); print > "README.md"}'
           git add README.md
           git commit -m "[ci skip] update release link for release of ${{ steps.release_tag.outputs.tag }}"
 
